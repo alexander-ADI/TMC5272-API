@@ -1,8 +1,8 @@
 # MSDK
 /build/
 /.vscode/
-!/.vscode/settings.json
 /.settings/
+/Makefile
 
 .cproject
 .project
