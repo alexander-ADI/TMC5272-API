@@ -8,9 +8,9 @@
 
 /**
  * @file    main.c
- * @brief   Application code for Towers of Hanoi project
+ * @brief   TMC5272 API Code
  * @details This is example code for the Trinamic motor control driver library 
- * used in Towers of Hanoi.
+ * used with the TMC5272.
  */
 
 /******************************************************************************
