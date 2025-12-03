@@ -22,17 +22,13 @@ This API is compatible with most microcontrollers; however, the functions `tmc52
 The demo uses the following hardware, according to the block diagram below.
 
 - [MAX32650FTHR](https://www.analog.com/en/resources/evaluation-hardware-and-software/evaluation-boards-kits/max32650fthr.html)
-- 3 TMC5272 Evaluation Platforms:
-    - [TMC5272-BOB](https://www.analog.com/en/resources/evaluation-hardware-and-software/evaluation-boards-kits/tmc5272-bob.html)
-    - [TMC5272-EVAL](https://www.analog.com/en/resources/evaluation-hardware-and-software/evaluation-boards-kits/tmc5272-eval.html)
+- [TMC5272-BOB](https://www.analog.com/en/resources/evaluation-hardware-and-software/evaluation-boards-kits/tmc5272-bob.html) or [TMC5272-EVAL](https://www.analog.com/en/resources/evaluation-hardware-and-software/evaluation-boards-kits/tmc5272-eval.html)
     - (Either board can be used.)
-- 5 Stepper motors
+- Stepper motors
 
 ![](assets/demo_block_diagram.png)
 
 To run the demo using the above hardware, install the [Maxim SDK](https://github.com/analogdevicesinc/msdk). 
-
-- Please refer to the MSDK documentation for instructions on building, flashing, and running projects.
 
 ### Hardware Setup
 
@@ -74,17 +70,16 @@ The final TMC5272-BOB wiring should match the table below.
 
 ### Software Setup
 
-This project uses a .gitignore in order to only track application-specific files. Copy the repo's contents into a blank project from the MaximSDK `Examples` folder. 
+This project only tracks application-specific files. Copy the repo's contents into a blank project from the MaximSDK `Examples` folder. 
 
-Refer to [MSDK User Guide](https://analogdevicesinc.github.io/msdk//USERGUIDE/#getting-started-with-visual-studio-code) for documentation on building and flashing an application to the MAX32650FTHR.
+- Please refer to the [MSDK User Guide](https://analogdevicesinc.github.io/msdk//USERGUIDE/#getting-started-with-visual-studio-code) for instructions on building, flashing, and running projects.
 
 ### Application Notes
 
-- Default register values are preset in `tmc5272_init()`. These can be left as-is, and should be good for most (NEMA17) stepper motors. (Use the Trinamic TMCL-IDE to explore alternative configurations.)
+- Default register values are preset in `tmc5272_init()`. These can be left as-is, and should be good for most NEMA 17 stepper motors. (Use the Trinamic TMCL-IDE to explore alternative configurations.)
 
 - Many API functions accept `ALL_MOTORS` to apply actions to both axes. Any functions that do not support this are noted in their function comments. Mostly these are `get()` functions for which it would not make sense to return a single value.
 
-- Look at the `#define` statements in `main.c` and `TMC5272_SPI.h`; modify as needed.
 
 ### Acknowledgements & Licensing
 This project is licensed under the MIT license, as detailed in this repo's LICENSE.txt.
