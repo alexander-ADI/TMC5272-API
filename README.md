@@ -1,45 +1,58 @@
 # TMC5272 Motor Control Driver
 
-This TMC5272 driver provides a C API for ADI's Trinamic TMC5272, enabling: 
+This driver for TMC5272 provides a C API for ADI's Trinamic TMC5272, enabling: 
 
 - IC initialization and application-specific configuration
 - Motor movement via position & velocity control
 - Trinamic Tricoder position feedback
 - StallGuard2 configuration & sensorless stall detection
 
+![A TMC5272-EVAL board with motor attached is controlled by a MAX32650FTHR board.](assets/demo.png)
+
 The driver establishes communications via the SPI bus. UART is currently **not** supported.
 
 ## Driver Demo
 
-A demo of repository functionality is provided in `main.c`, and is configured to use a MAX32650FTHR microcontroller.
+The `main.c` file demonstrates implemented features, using a MAX32650FTHR as the host microcontroller.
 
 This API is compatible with most microcontrollers; however, the functions `tmc5272_SPI_readWrite` and `tmc5272_SPI_init` must be ported.
 
 ### Hardware / Software Requirements
 
-The demo uses the following hardware:
+The demo uses the following hardware, according to the block diagram below.
 
 - [MAX32650FTHR](https://www.analog.com/en/resources/evaluation-hardware-and-software/evaluation-boards-kits/max32650fthr.html)
-- TMC5272 Evaluation Platform
+- 3 TMC5272 Evaluation Platforms:
     - [TMC5272-BOB](https://www.analog.com/en/resources/evaluation-hardware-and-software/evaluation-boards-kits/tmc5272-bob.html)
     - [TMC5272-EVAL](https://www.analog.com/en/resources/evaluation-hardware-and-software/evaluation-boards-kits/tmc5272-eval.html)
-- Stepper motor(s)
-
-The repository does not rely on Maxim SDK; however, the configured demo uses a MAX32650. To run the demo using the above hardware, install the [Maxim SDK](https://github.com/analogdevicesinc/msdk). Please refer to the MSDK documentation for instructions on building, flashing, and running projects.
-
-### Hardware Setup
+    - (Either board can be used.)
+- 5 Stepper motors
 
 ![](assets/demo_block_diagram.png)
 
-- Connect a TMC5272-BOB to the MAX32650 FTHR board via SPI1. (Use SS1, SS2, or SS3.) 
-- Wire stepper motors to the TMC5272 A/B & C/D outputs.
+To run the demo using the above hardware, install the [Maxim SDK](https://github.com/analogdevicesinc/msdk). 
+
+- Please refer to the MSDK documentation for instructions on building, flashing, and running projects.
+
+### Hardware Setup
+
+> [!caution]
+> Do not connect / disconnect a motor while power is enabled! This can cause current to flow into the TMC5272 drivers, potentially damaging the device.
+>
+> Additionally, turn on the 12V before providing 3.3V, and remove 3.3V before removing 12V. Otherwise, the board may draw power from the 3.3V rail. (I haven't had this break anything yet, but it certainly seems bad.)
+
+Connect hardware in the following order:
+
+1. Connect TMC5272-BOBs to the MAX32650 FTHR board via SPI1. (Use SS1, SS2, and SS3.) 
+2. Wire stepper motors to the TMC5272-BOB A/B or C/D outputs.
     - Ensure that each ± A/B and ± C/D output pair is maintained.
     - Ensure that all motors match wiring polarity to ensure the same rotational direction.
-- Connect TMC GND <-> MAX32650 GND.
-- Provide 12V to the TMC5272 on VM. 
-- Provide 3.3V to the TMC5272 on VDD. (This can be supplied via MAX32650FTHR.)
+3. Make sure shared ground is established (TMC GND <-> MAX32650 GND).
+4. Provide power rails.
+    1. Connect 12V to the TMC5272 on VM. 
+    2. Connect 3.3V to the TMC5272 on VDD. (This can be supplied via MAX32650FTHR.)
 
-The TMC5272-BOB should be connected according to the table below.
+The final TMC5272-BOB wiring should match the table below.
 
 | Pin | Header Name | Connection |   | Pin | Header Name | Connection       |
 |-----|-------------|------------|---|-----|-------------|------------------|
@@ -58,29 +71,12 @@ The TMC5272-BOB should be connected according to the table below.
 | 13  | ENCB2/REFL2 | -          |   | 27  | DIAG0       | GPIO (Interrupt) |
 | 14  | ENCN2/REFR2 | -          |   | 28  | DIAG1       | GPIO (Interrupt) |
 
-> [!caution]
-> Do not connect / disconnect a motor while power is enabled! This can cause current to flow into the TMC5272 drivers, potentially damaging the device.
->
-> Additionally, turn on the 12V before providing 3.3V, and remove 3.3V before removing 12V. Otherwise, the board may draw power from the 3.3V rail. (I haven't had this break anything yet, but it certainly seems bad.)
 
 ### Software Setup
 
 This project uses a .gitignore in order to only track application-specific files. Copy the repo's contents into a blank project from the MaximSDK `Examples` folder. 
 
 Refer to [MSDK User Guide](https://analogdevicesinc.github.io/msdk//USERGUIDE/#getting-started-with-visual-studio-code) for documentation on building and flashing an application to the MAX32650FTHR.
-
-#### 3. Example Usage
-
-The provided `main.c` demonstrates:
-
-- Necessary setup steps:
-    - Initializing SPI and TMC5272 devices using `tmc5272_dev_t`
-    - Configuring motion profiles (velocity curves)
-- Moving motors to absolute/relative positions
-- Polling for arrival
-- Basic Tricoder polling
-
-See `TMC5272.h` for the full API.
 
 ### Application Notes
 
