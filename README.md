@@ -1,25 +1,35 @@
 # TMC5272 Motor Control Driver
 
-The TMC5272 driver included in this project provides a C API for ADI's Trinamic TMC5272, enabling: 
+This TMC5272 driver provides a C API for ADI's Trinamic TMC5272, enabling: 
 
 - IC initialization and application-specific configuration
 - Motor movement via position & velocity control
 - Trinamic Tricoder position feedback
 - StallGuard2 configuration & sensorless stall detection
 
-This driver establishes communications via the SPI bus. An example sketch of functionality is provided in `main.c`. 
+The driver establishes communications via the SPI bus. UART is currently **not** supported.
 
-## Hardware Requirements
+## Driver Demo
 
-- MAX32650FTHR evaluation board
-- TMC5272-BOB (Break-Out Board)
-- Stepper motor(s)
+A demo of repository functionality is provided in `main.c`, and is configured to use a MAX32650FTHR microcontroller.
 
 This API is compatible with most microcontrollers; however, the functions `tmc5272_SPI_readWrite` and `tmc5272_SPI_init` must be ported.
 
-## Demo Setup Procedure
+### Hardware / Software Requirements
 
-### 1. Hardware Setup
+The demo uses the following hardware:
+
+- [MAX32650FTHR](https://www.analog.com/en/resources/evaluation-hardware-and-software/evaluation-boards-kits/max32650fthr.html)
+- TMC5272 Evaluation Platform
+    - [TMC5272-BOB](https://www.analog.com/en/resources/evaluation-hardware-and-software/evaluation-boards-kits/tmc5272-bob.html)
+    - [TMC5272-EVAL](https://www.analog.com/en/resources/evaluation-hardware-and-software/evaluation-boards-kits/tmc5272-eval.html)
+- Stepper motor(s)
+
+The repository does not rely on Maxim SDK; however, the configured demo uses a MAX32650. To run the demo using the above hardware, install the [Maxim SDK](https://github.com/analogdevicesinc/msdk). Please refer to the MSDK documentation for instructions on building, flashing, and running projects.
+
+### Hardware Setup
+
+![](assets/demo_block_diagram.png)
 
 - Connect a TMC5272-BOB to the MAX32650 FTHR board via SPI1. (Use SS1, SS2, or SS3.) 
 - Wire stepper motors to the TMC5272 A/B & C/D outputs.
@@ -29,20 +39,37 @@ This API is compatible with most microcontrollers; however, the functions `tmc52
 - Provide 12V to the TMC5272 on VM. 
 - Provide 3.3V to the TMC5272 on VDD. (This can be supplied via MAX32650FTHR.)
 
-The example project outputs to 3 TMC5272-BOBs, on SS1.AB, SS2.AB & SS2.CD, and SS3.AB & SS3.CD.
+The TMC5272-BOB should be connected according to the table below.
+
+| Pin | Header Name | Connection |   | Pin | Header Name | Connection       |
+|-----|-------------|------------|---|-----|-------------|------------------|
+| 1   | VCC_IO      | 3.3V       |   | 15  | +VM         | 12V              |
+| 2   | GND         | 0V         |   | 16  | GND         | 0V               |
+| 3   | ENCA1       | -          |   | 17  | OD1         | M1.D1            |
+| 4   | ENCB1/REFL1 | -          |   | 18  | OD2         | M1.D2            |
+| 5   | ENCN1/REFR1 | -          |   | 19  | OC1         | M1.C1            |
+| 6   | SPI_CSn     | SPI_CS     |   | 20  | OC2         | M1.C2            |
+| 7   | SPI_SCK     | SPI_SCK    |   | 21  | GND         | 0V               |
+| 8   | SPI_MOSI    | SPI_MOSI   |   | 22  | OA1         | M0.A1            |
+| 9   | SPI_MISO    | SPI_MISO   |   | 23  | OA2         | M0.A2            |
+| 10  | CLK         | 0V         |   | 24  | OB1         | M0.B1            |
+| 11  | SLEEPn      | -          |   | 25  | OB2         | M0.B2            |
+| 12  | ENCA2       | -          |   | 26  | GND         | 0V               |
+| 13  | ENCB2/REFL2 | -          |   | 27  | DIAG0       | GPIO (Interrupt) |
+| 14  | ENCN2/REFR2 | -          |   | 28  | DIAG1       | GPIO (Interrupt) |
 
 > [!caution]
 > Do not connect / disconnect a motor while power is enabled! This can cause current to flow into the TMC5272 drivers, potentially damaging the device.
 >
 > Additionally, turn on the 12V before providing 3.3V, and remove 3.3V before removing 12V. Otherwise, the board may draw power from the 3.3V rail. (I haven't had this break anything yet, but it certainly seems bad.)
 
-### 2. Build & Flash
+### Software Setup
 
 This project uses a .gitignore in order to only track application-specific files. Copy the repo's contents into a blank project from the MaximSDK `Examples` folder. 
 
 Refer to [MSDK User Guide](https://analogdevicesinc.github.io/msdk//USERGUIDE/#getting-started-with-visual-studio-code) for documentation on building and flashing an application to the MAX32650FTHR.
 
-### 3. Example Usage
+#### 3. Example Usage
 
 The provided `main.c` demonstrates:
 
